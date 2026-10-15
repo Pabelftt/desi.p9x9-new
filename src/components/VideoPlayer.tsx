@@ -50,6 +50,7 @@ export default function VideoPlayer({
   const continueRef = useRef<HTMLButtonElement>(null);
   const allowedRef = useRef(false);
   const [playing, setPlaying] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
 
   const cookieName = `dv_ok_${opaqueId(videoId)}`;
@@ -115,14 +116,45 @@ export default function VideoPlayer({
     const handlePause = () => setPlaying(false);
     const handleEnded = () => setPlaying(false);
 
+    const showLoader = () => setLoading(true);
+    const hideLoader = () => setLoading(false);
+
     video.addEventListener('play', handlePlay);
     video.addEventListener('pause', handlePause);
     video.addEventListener('ended', handleEnded);
+
+    video.addEventListener('loadstart', showLoader);
+    video.addEventListener('waiting', showLoader);
+    video.addEventListener('stalled', showLoader);
+    video.addEventListener('seeking', showLoader);
+    video.addEventListener('loadeddata', hideLoader);
+    video.addEventListener('canplay', hideLoader);
+    video.addEventListener('canplaythrough', hideLoader);
+    video.addEventListener('playing', hideLoader);
+    video.addEventListener('seeked', hideLoader);
+    video.addEventListener('error', hideLoader);
+
+    if (video.readyState < 3) {
+      setLoading(true);
+    } else {
+      setLoading(false);
+    }
 
     return () => {
       video.removeEventListener('play', handlePlay);
       video.removeEventListener('pause', handlePause);
       video.removeEventListener('ended', handleEnded);
+
+      video.removeEventListener('loadstart', showLoader);
+      video.removeEventListener('waiting', showLoader);
+      video.removeEventListener('stalled', showLoader);
+      video.removeEventListener('seeking', showLoader);
+      video.removeEventListener('loadeddata', hideLoader);
+      video.removeEventListener('canplay', hideLoader);
+      video.removeEventListener('canplaythrough', hideLoader);
+      video.removeEventListener('playing', hideLoader);
+      video.removeEventListener('seeked', hideLoader);
+      video.removeEventListener('error', hideLoader);
     };
   }, []);
 
@@ -194,27 +226,115 @@ export default function VideoPlayer({
         target.style.borderColor = 'var(--border)';
       }}
     >
-      <video
-        ref={videoRef}
-        id="mainVideo"
-        controls
-        preload="auto"
-        playsInline
-        poster={poster}
-        aria-label={title}
-        data-playing={playing}
+      <div
+        className="video-frame"
         style={{
+          position: 'relative',
           width: '100%',
-          height: 'auto',
-          display: 'block',
-          cursor: 'pointer',
           background: '#000',
         }}
-        onClick={requestPlayback}
       >
-        <source src={src} type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+        <video
+          ref={videoRef}
+          id="mainVideo"
+          controls
+          preload="auto"
+          playsInline
+          poster={poster}
+          aria-label={title}
+          data-playing={playing}
+          style={{
+            width: '100%',
+            height: 'auto',
+            display: 'block',
+            cursor: 'pointer',
+            background: '#000',
+          }}
+          onClick={requestPlayback}
+        >
+          <source src={src} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+
+        {loading && (
+          <div
+            role="status"
+            aria-label="ভিডিও লোড হচ্ছে"
+            className="video-spinner"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              pointerEvents: 'none',
+              zIndex: 15,
+            }}
+          >
+            <span className="video-spinner-ring" />
+          </div>
+        )}
+
+        <button
+          ref={buttonRef}
+          type="button"
+          className="center-play-button"
+          id="centerPlayButton"
+          aria-label={playing ? 'Pause video' : 'Play video'}
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 80,
+            height: 80,
+            padding: 0,
+            background: 'rgba(0, 0, 0, 0.65)',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            opacity: playing ? 0 : 1,
+            transition: 'all 0.3s ease',
+            zIndex: 10,
+            border: '3px solid rgba(255, 255, 255, 0.85)',
+            boxShadow: '0 0 30px rgba(0, 0, 0, 0.8)',
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            requestPlayback();
+          }}
+          onMouseEnter={(e) => {
+            const target = e.currentTarget as HTMLElement;
+            target.style.background = 'rgba(0, 0, 0, 0.9)';
+            target.style.borderColor = 'var(--accent)';
+            target.style.transform = 'translate(-50%, -50%) scale(1.1)';
+          }}
+          onMouseLeave={(e) => {
+            const target = e.currentTarget as HTMLElement;
+            target.style.background = 'rgba(0, 0, 0, 0.65)';
+            target.style.borderColor = 'rgba(255, 255, 255, 0.85)';
+            target.style.transform = 'translate(-50%, -50%)';
+          }}
+        >
+          <i
+            ref={iconRef}
+            id="centerPlayIcon"
+            aria-hidden="true"
+            className={playing ? 'fa-solid fa-pause' : 'fa-solid fa-play'}
+            style={{
+              fontSize: 34,
+              color: '#fff',
+              marginLeft: 5,
+              textShadow: '0 2px 10px rgba(0, 0, 0, 0.7)',
+            }}
+          />
+        </button>
+      </div>
 
       <div
         className="description"
@@ -234,63 +354,6 @@ export default function VideoPlayer({
           {description}
         </p>
       </div>
-
-      <button
-        ref={buttonRef}
-        type="button"
-        className="center-play-button"
-        id="centerPlayButton"
-        aria-label={playing ? 'Pause video' : 'Play video'}
-        style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 80,
-          height: 80,
-          padding: 0,
-          background: 'rgba(0, 0, 0, 0.65)',
-          borderRadius: '50%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-          opacity: playing ? 0 : 1,
-          transition: 'all 0.3s ease',
-          zIndex: 10,
-          border: '3px solid rgba(255, 255, 255, 0.85)',
-          boxShadow: '0 0 30px rgba(0, 0, 0, 0.8)',
-        }}
-        onClick={(e) => {
-          e.stopPropagation();
-          requestPlayback();
-        }}
-        onMouseEnter={(e) => {
-          const target = e.currentTarget as HTMLElement;
-          target.style.background = 'rgba(0, 0, 0, 0.9)';
-          target.style.borderColor = 'var(--accent)';
-          target.style.transform = 'translate(-50%, -50%) scale(1.1)';
-        }}
-        onMouseLeave={(e) => {
-          const target = e.currentTarget as HTMLElement;
-          target.style.background = 'rgba(0, 0, 0, 0.65)';
-          target.style.borderColor = 'rgba(255, 255, 255, 0.85)';
-          target.style.transform = 'translate(-50%, -50%)';
-        }}
-      >
-        <i
-          ref={iconRef}
-          id="centerPlayIcon"
-          aria-hidden="true"
-          className={playing ? 'fa-solid fa-pause' : 'fa-solid fa-play'}
-          style={{
-            fontSize: 34,
-            color: '#fff',
-            marginLeft: 5,
-            textShadow: '0 2px 10px rgba(0, 0, 0, 0.7)',
-          }}
-        />
-      </button>
 
       {showModal && (
         <div
@@ -376,14 +439,15 @@ export default function VideoPlayer({
       )}
 
       <style jsx>{`
-        .video-player-container:hover .center-play-button,
-        video:not([data-playing="true"]) + .center-play-button {
+        .video-frame:hover .center-play-button,
+        .video-frame video:not([data-playing="true"]) + .center-play-button,
+        .video-frame video:not([data-playing="true"]) ~ .center-play-button {
           opacity: 1;
         }
-        video[data-playing="true"] + .center-play-button {
+        .video-frame video[data-playing="true"] ~ .center-play-button {
           opacity: 0;
         }
-        .video-player-container:hover video[data-playing="true"] + .center-play-button {
+        .video-frame:hover video[data-playing="true"] ~ .center-play-button {
           opacity: 1;
         }
         .center-play-button i {
@@ -391,6 +455,20 @@ export default function VideoPlayer({
           color: #fff;
           margin-left: 5px;
           text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+        }
+        .video-spinner-ring {
+          width: 54px;
+          height: 54px;
+          border-radius: 50%;
+          border: 5px solid rgba(255, 255, 255, 0.25);
+          border-top-color: #1a6bff;
+          animation: videoSpin 0.8s linear infinite;
+          display: block;
+        }
+        @keyframes videoSpin {
+          to {
+            transform: rotate(360deg);
+          }
         }
       `}</style>
     </div>
