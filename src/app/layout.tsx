@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from 'next';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import Navbar from '@/components/Navbar';
 import Header from '@/components/Header';
-import Ads from '@/components/Ads';
 import { siteConfig } from '@/lib/site-config';
 import './globals.css';
 
@@ -62,7 +61,6 @@ export default function RootLayout({
           <Navbar />
           <Header />
           <main>{children}</main>
-          <Ads />
           <footer
             style={{
               textAlign: 'center',

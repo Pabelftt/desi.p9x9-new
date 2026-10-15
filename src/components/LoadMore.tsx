@@ -73,28 +73,24 @@ export default function LoadMore({ excludeId = '', initialSkip = 8 }: LoadMorePr
   return (
     <div style={{ width: '100%', margin: '30px 0 50px', textAlign: 'center' }}>
       {addedItems.length > 0 && (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-          gap: '20px',
-          marginBottom: '30px',
-        }}>
+        <div className="grid" style={{ marginBottom: 30 }}>
           {addedItems.map((item, idx) => (
             <a
               key={item.id + idx}
               href={`/movie/${item.id}`}
+              className="card"
               style={{
                 textDecoration: 'none',
                 color: 'var(--text)',
                 background: 'var(--card-grad)',
-                borderRadius: 14,
+                borderRadius: 18,
                 overflow: 'hidden',
                 border: '1px solid var(--border)',
                 boxShadow: 'var(--shadow)',
                 display: 'block',
               }}
             >
-              <div style={{ position: 'relative' }}>
+              <div className="card-thumb">
                 <img
                   src={item.img}
                   alt={item.hadding}
@@ -104,11 +100,10 @@ export default function LoadMore({ excludeId = '', initialSkip = 8 }: LoadMorePr
                   decoding="async"
                   style={{
                     width: '100%',
-                    aspectRatio: '16 / 9',
-                    objectFit: 'cover',
+                    height: '100%',
+                    objectFit: 'contain',
                     objectPosition: 'center',
                     display: 'block',
-                    borderBottom: '1px solid var(--border)',
                   }}
                 />
                 <div style={{
@@ -133,6 +128,8 @@ export default function LoadMore({ excludeId = '', initialSkip = 8 }: LoadMorePr
                 margin: 0,
                 fontWeight: 600,
                 lineHeight: 1.4,
+                maxHeight: 72,
+                overflow: 'hidden',
               }}>
                 <i className="fa-solid fa-play-circle" aria-hidden="true" style={{ marginRight: 6, color: 'var(--accent)', fontSize: 12 }} />
                 {item.hadding}

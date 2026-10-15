@@ -3,7 +3,6 @@ import { connectDB } from '@/lib/mongodb';
 import Movie from '@/models/Movie';
 import MovieCard from '@/components/MovieCard';
 import Navbar from '@/components/Navbar';
-import HomeAds from '@/components/HomeAds';
 import LoadMore from '@/components/LoadMore';
 import { siteConfig } from '@/lib/site-config';
 
@@ -37,7 +36,6 @@ export default async function VideosPage() {
   return (
     <>
       <Navbar />
-      <HomeAds />
       <div className="grid">
         {data.map((movie, idx) => (
           <MovieCard key={movie.id} movie={movie} priority={idx === 0} />

@@ -40,11 +40,6 @@ export default function MovieCard({ movie, priority = false }: MovieCardProps) {
         target.style.borderColor = 'rgba(77, 163, 255, 0.5)';
         const before = target.querySelector('.card-before') as HTMLElement;
         if (before) before.style.opacity = '1';
-        const img = target.querySelector('img') as HTMLImageElement;
-        if (img) {
-          img.style.transform = 'scale(1.12)';
-          img.style.filter = 'brightness(1.1)';
-        }
         const h3 = target.querySelector('h3') as HTMLElement;
         if (h3) {
           h3.style.color = 'var(--accent)';
@@ -60,11 +55,6 @@ export default function MovieCard({ movie, priority = false }: MovieCardProps) {
         target.style.borderColor = 'var(--border)';
         const before = target.querySelector('.card-before') as HTMLElement;
         if (before) before.style.opacity = '0';
-        const img = target.querySelector('img') as HTMLImageElement;
-        if (img) {
-          img.style.transform = '';
-          img.style.filter = 'brightness(0.92)';
-        }
         const h3 = target.querySelector('h3') as HTMLElement;
         if (h3) {
           h3.style.color = 'var(--text)';
@@ -106,25 +96,24 @@ export default function MovieCard({ movie, priority = false }: MovieCardProps) {
         <i className="fa-solid fa-star" aria-hidden="true" style={{ color: 'gold', fontSize: 11 }} />
         {rating}
       </div>
-      <Image
-        src={movie.img}
-        alt={movie.hadding}
-        width={300}
-        height={169}
-        loading={priority ? 'eager' : 'lazy'}
-        fetchPriority={priority ? 'high' : undefined}
-        decoding="async"
-        style={{
-          width: '100%',
-          display: 'block',
-          aspectRatio: '16 / 9',
-          objectFit: 'cover',
-          objectPosition: 'center',
-          filter: 'brightness(0.92)',
-          transition: 'transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.6s',
-          borderBottom: '1px solid var(--border)',
-        }}
-      />
+      <div className="card-thumb">
+        <Image
+          src={movie.img}
+          alt={movie.hadding}
+          width={300}
+          height={169}
+          loading={priority ? 'eager' : 'lazy'}
+          fetchPriority={priority ? 'high' : undefined}
+          decoding="async"
+          style={{
+            width: '100%',
+            height: '100%',
+            display: 'block',
+            objectFit: 'contain',
+            objectPosition: 'center',
+          }}
+        />
+      </div>
       <h3 style={{
         position: 'relative',
         zIndex: 2,

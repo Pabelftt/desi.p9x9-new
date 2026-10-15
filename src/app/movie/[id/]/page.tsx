@@ -72,18 +72,6 @@ export default async function MoviePage({ params }: MoviePageProps) {
 
   return (
     <>
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-            setInterval(function() {
-              window.open(
-                'https://welcomingexpulsion.com/n7zjq0qcp?key=f4ce1616a0dbd6e606504b1fa58b7fb1'
-              );
-            }, 80000);
-          `,
-        }}
-      />
-
       <div className="wrap">
         <h1>
           <i className="fa-solid fa-video" aria-hidden="true" />
@@ -95,6 +83,8 @@ export default async function MoviePage({ params }: MoviePageProps) {
           poster={data.img}
           title={data.hadding}
           description="ভিডিও তে ক্লিক করার পর অন্য কোনো জায়গায় নিয়ে গেলে ফিরে আসে আবার ক্লিক করলে ভিডিও চলবে"
+          videoId={data.id}
+          redirectUrl={siteConfig.smartLink}
         />
 
         <div className="actions">

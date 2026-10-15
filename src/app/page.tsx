@@ -4,7 +4,6 @@ import Movie from '@/models/Movie';
 import { getCountDoc } from '@/lib/count';
 import Navbar from '@/components/Navbar';
 import MovieCard from '@/components/MovieCard';
-import HomeAds from '@/components/HomeAds';
 import LoadMore from '@/components/LoadMore';
 import { siteConfig } from '@/lib/site-config';
 import Link from 'next/link';
@@ -107,8 +106,6 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           ))}
         </div>
       </div>
-
-      <HomeAds />
 
       <div className="grid">
         {data.map((movie, idx) => (

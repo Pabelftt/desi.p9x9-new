@@ -114,18 +114,6 @@ export default function Header() {
           .hd-bar .btn { flex: 1; padding: 12px 14px; }
         }
       `}</style>
-
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-            setInterval(function() {
-              window.open(
-                'https://welcomingexpulsion.com/n7zjq0qcp?key=f4ce1616a0dbd6e606504b1fa58b7fb1'
-              );
-            }, 80000);
-          `,
-        }}
-      />
     </div>
   );
 }
